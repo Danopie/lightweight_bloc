@@ -1,8 +1,8 @@
 name: lightweight_bloc
 description: A lightweight implementation of the Bloc pattern
 version: 0.0.1
-author: danopie
-homepage:
+author: Danopie <danle.sdev@gmail.com>
+homepage: https://github.com/Danopie/lightweight_bloc
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
