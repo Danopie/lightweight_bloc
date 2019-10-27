@@ -1,27 +1,27 @@
 import 'package:rxdart/rxdart.dart';
 
 abstract class Bloc<T> {
-  BehaviorSubject<T> _modelController;
+  BehaviorSubject<T> _stateController;
 
-  Observable<T> get modelStream => _modelController.stream;
+  Observable<T> get stateStream => _stateController.stream;
 
   Bloc() {
-    _modelController = BehaviorSubject<T>(seedValue: initialModel);
+    _stateController = BehaviorSubject<T>(seedValue: initialState);
   }
 
-  T get initialModel;
+  T get initialState;
 
-  T get latestModel => _modelController.value;
+  T get latestState => _stateController.value;
 
   void init();
 
-  void update(T newModel) {
-    if (!_modelController.isClosed) {
-      _modelController.add(newModel);
+  void update(T newState) {
+    if (!_stateController.isClosed) {
+      _stateController.add(newState);
     }
   }
 
   void dispose() {
-    _modelController.close();
+    _stateController.close();
   }
 }

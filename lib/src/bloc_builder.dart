@@ -3,7 +3,7 @@ import 'package:lightweight_bloc/src/bloc.dart';
 import 'package:lightweight_bloc/src/bloc_provider.dart';
 
 typedef BlocWidgetBuilderFunction<T extends Bloc<M>, M> = Widget Function(
-    BuildContext context, T bloc, M model);
+    BuildContext context, T bloc, M state);
 
 class BlocWidgetBuilder<T extends Bloc<M>, M> extends StatefulWidget {
   final T bloc;
@@ -30,8 +30,8 @@ class _BlocWidgetBuilderState<T extends Bloc<M>, M>
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<M>(
-      stream: _bloc.modelStream,
-      initialData: _bloc.latestModel,
+      stream: _bloc.stateStream,
+      initialData: _bloc.latestState,
       builder: (context, snapshot) {
         return widget.builder(context, _bloc, snapshot.data);
       },
