@@ -35,15 +35,15 @@ class ABloc extends Bloc<AState>{
 }
 ```
 
-* Provides initialState, which is the state that this Bloc starts with.
+* Provides **initialState**, which is the state that this Bloc starts with.
 
 ```dart
 AState get initialState => AState(state: Loading)
 ```
 
 * Define event handling functions, usually starts with “on…”,
-* Use latestState to access the latest State object up until then.
-* Then use update to emits a new State. This State should usually be a clone from the previous State, with different State identifier/data.
+* Use **latestState** to access the latest State object up until then.
+* Then use **update** to emits a new State. This State should usually be a clone from the previous State, with different State identifier/data.
 
 ```dart
 void onUserRefreshPage() async {
@@ -58,7 +58,7 @@ void onUserRefreshPage() async {
 Data output of a Bloc.
 Every state should:
 * Have State identifiers.
-* Have a copyWith function to clone the current State with some new data.
+* Have a **copyWith** function to clone the current State with some new data.
 
 ```dart
 class AState {
@@ -106,7 +106,7 @@ A flutter widget provides a builder function to render the widgets with the asso
 ## Tips and Tricks
 
 ### Nullable
-Sometimes with new events, we want to clear some data in the State. So we might do something like latestState.copyWith(data: null). However, copyWith doesn’t understand and thinks we didn’t pass any value to it.
+Sometimes with new events, we want to clear some data in the State. So we might do something like `latestState.copyWith(data: null)`. However, **copyWith** doesn’t understand and thinks we didn’t pass any value to it.
 
 ```dart
 class AState {
@@ -119,7 +119,7 @@ class AState {
 }
 ```
 
-In these cases, we can use Nullable<T> to differentiate between passing a null value and not passing any value at all.
+In these cases, we can use **Nullable<T>** to differentiate between passing a null value and not passing any value at all.
   
 ```dart
 class AState {
