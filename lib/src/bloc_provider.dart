@@ -7,11 +7,13 @@ typedef BlocBuilderFunction<T extends Bloc<dynamic>> = T Function(BuildContext);
 class BlocProvider<T extends Bloc<dynamic>> extends StatefulWidget {
   final Widget child;
   final BlocBuilderFunction<T> builder;
+  final bool autoInit;
 
   BlocProvider({
     Key key,
     this.builder,
     this.child,
+    this.autoInit = true,
   }) : super(key: key);
 
   @override
@@ -37,7 +39,13 @@ class _BlocProviderState<T extends Bloc<dynamic>>
   Widget build(BuildContext context) {
     return Provider<T>(
       child: widget.child,
-      builder: (context) => widget.builder(context),
+      builder: (context) {
+        final Bloc b = widget.builder(context);
+        if (widget.autoInit) {
+          b.init();
+        }
+        return b;
+      },
       dispose: (context, bloc) {
         bloc?.dispose();
       },
