@@ -1,3 +1,7 @@
+## [0.0.3]
+
+* [BREAKING] Default to auto init bloc upon construction
+* Public Nullable class
 
 ## [0.0.2]
 
