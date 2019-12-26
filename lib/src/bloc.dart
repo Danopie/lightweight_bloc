@@ -1,6 +1,9 @@
+import 'package:lightweight_bloc/src/bloc_observer.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class Bloc<T> {
+  static final _blocObserver = BlocObserver();
+
   BehaviorSubject<T> _stateController;
 
   Observable<T> get stateStream => _stateController.stream;
@@ -17,6 +20,7 @@ abstract class Bloc<T> {
 
   void update(T newState) {
     if (!_stateController.isClosed) {
+      _blocObserver.invokeCallbacks(this, latestState, newState);
       _stateController.add(newState);
     }
   }
