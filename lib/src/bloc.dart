@@ -1,4 +1,4 @@
-import 'package:lightweight_bloc/lightweight_bloc.dart';
+import 'package:lightweight_bloc/src/bloc_observer.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class Bloc<T> {
