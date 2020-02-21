@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 typedef BlocBuilderFunction<T extends Bloc<dynamic>> = T Function(BuildContext);
 
-class BlocProvider<T extends Bloc<dynamic>> extends StatefulWidget {
+class BlocProvider<T extends Bloc<dynamic>> extends StatefulWidget with SingleChildCloneableWidget {
   final Widget child;
   final BlocBuilderFunction<T> builder;
   final bool autoInit;
@@ -31,6 +31,16 @@ class BlocProvider<T extends Bloc<dynamic>> extends StatefulWidget {
       );
     }
   }
+
+  @override
+  SingleChildCloneableWidget cloneWithChild(Widget child) {
+    return BlocProvider<T>(
+      key: key,
+      builder: builder,
+      child: child,
+      autoInit: autoInit,
+    );
+  }
 }
 
 class _BlocProviderState<T extends Bloc<dynamic>>
@@ -52,3 +62,21 @@ class _BlocProviderState<T extends Bloc<dynamic>>
     );
   }
 }
+
+class MultiBlocProvider extends StatelessWidget {
+  final List<BlocProvider> blocProviders;
+  final List<BlocProvider> Function(BuildContext context) builder;
+  final Widget child;
+
+  const MultiBlocProvider({Key key, this.blocProviders, this.child, this.builder}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    assert(blocProviders != null || builder != null);
+    return MultiProvider(
+      providers:builder != null? builder(context): blocProviders,
+      child: child,
+    );
+  }
+}
+
