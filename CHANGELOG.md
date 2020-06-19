@@ -1,3 +1,11 @@
+## [0.0.5]
+
+* Remove RxDart dependencies
+* Add BlocConsumer
+* Make Bloc a Stream
+* Reduce Bloc syntax
+* Allow Blocs to create initialState in constructor
+
 ## [0.0.4]
 
 * Add MultiBlocProvider
