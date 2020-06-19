@@ -1,28 +1,46 @@
-import 'package:lightweight_bloc/src/bloc_observer.dart';
-import 'package:rxdart/rxdart.dart';
+import 'dart:async';
 
-abstract class Bloc<T> {
+import 'package:lightweight_bloc/src/bloc_observer.dart';
+
+abstract class Bloc<T> extends Stream<T> {
+
   static final _blocObserver = BlocObserver();
 
-  BehaviorSubject<T> _stateController;
+  final _stateController = StreamController<T>.broadcast();
 
-  Observable<T> get stateStream => _stateController.stream;
+  T _state;
 
-  Bloc() {
-    _stateController = BehaviorSubject<T>(seedValue: initialState);
+  Bloc({T initialState}) {
+    _state = initialState ?? this.initialState;
   }
 
   T get initialState;
 
-  T get latestState => _stateController.value;
+  T get state => _state;
 
   void init();
 
   void update(T newState) {
     if (!_stateController.isClosed) {
-      _blocObserver.invokeCallbacks(this, latestState, newState);
+      _blocObserver.invokeCallbacks(this, state, newState);
       _stateController.add(newState);
     }
+  }
+
+  @override
+  StreamSubscription<T> listen(void onData(T event),
+      {Function onError, void onDone(), bool cancelOnError}) {
+    return _stateStream.listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+      cancelOnError: cancelOnError,
+    );
+  }
+
+  Stream<T> get _stateStream async* {
+    yield state;
+    yield* _stateController.stream;
   }
 
   void dispose() {

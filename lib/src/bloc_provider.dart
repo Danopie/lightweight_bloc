@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lightweight_bloc/src/bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 typedef BlocBuilderFunction<T extends Bloc<dynamic>> = T Function(BuildContext);
 
-class BlocProvider<T extends Bloc<dynamic>> extends StatefulWidget with SingleChildCloneableWidget {
+class BlocProvider<T extends Bloc<dynamic>> extends SingleChildStatefulWidget {
   final Widget child;
   final BlocBuilderFunction<T> builder;
   final bool autoInit;
@@ -14,7 +15,7 @@ class BlocProvider<T extends Bloc<dynamic>> extends StatefulWidget with SingleCh
     this.builder,
     this.child,
     this.autoInit = true,
-  }) : super(key: key);
+  }) : super(key: key, child: child);
 
   @override
   _BlocProviderState<T> createState() => _BlocProviderState<T>();
@@ -31,25 +32,15 @@ class BlocProvider<T extends Bloc<dynamic>> extends StatefulWidget with SingleCh
       );
     }
   }
-
-  @override
-  SingleChildCloneableWidget cloneWithChild(Widget child) {
-    return BlocProvider<T>(
-      key: key,
-      builder: builder,
-      child: child,
-      autoInit: autoInit,
-    );
-  }
 }
 
 class _BlocProviderState<T extends Bloc<dynamic>>
-    extends State<BlocProvider<T>> {
+    extends SingleChildState<BlocProvider<T>> {
   @override
-  Widget build(BuildContext context) {
-    return Provider<T>(
-      child: widget.child,
-      builder: (context) {
+  Widget buildWithChild(BuildContext context, Widget child) {
+    return InheritedProvider<T>(
+      child: child,
+      create: (context) {
         final Bloc b = widget.builder(context);
         if (widget.autoInit) {
           b.init();
@@ -68,15 +59,22 @@ class MultiBlocProvider extends StatelessWidget {
   final List<BlocProvider> Function(BuildContext context) builder;
   final Widget child;
 
-  const MultiBlocProvider({Key key, this.blocProviders, this.child, this.builder}) : super(key: key);
+  const MultiBlocProvider(
+      {Key key, this.blocProviders, this.child, this.builder})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     assert(blocProviders != null || builder != null);
     return MultiProvider(
-      providers:builder != null? builder(context): blocProviders,
+      providers: builder != null ? builder(context) : blocProviders,
       child: child,
     );
   }
 }
 
+extension BlocProviderEx on BuildContext {
+  T bloc<T extends Bloc>() {
+    return BlocProvider.of<T>(this);
+  }
+}
