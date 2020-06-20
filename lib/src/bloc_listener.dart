@@ -26,11 +26,11 @@ class _BlocListenerState<T extends Bloc<M>, M>
 
   @override
   void initState() {
-    _bloc = widget.bloc ?? BlocProvider.of<T>(context);
+    _bloc = widget.bloc ?? context.bloc<T>();
     assert(
         _bloc != null && _bloc is T, "Bloc must be of type ${T.runtimeType}");
 
-    _subscription = _bloc.stateStream.listen((state) {
+    _subscription = _bloc.listen((state) {
       if (mounted) {
         assert(
             state is M, "${state.runtimeType} is not of type ${M.runtimeType}");

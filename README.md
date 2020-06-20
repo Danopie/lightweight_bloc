@@ -24,6 +24,10 @@ Then in the child widgets, you can access ABloc like this
 ```dart
 final aBloc = BlocProvider.of<ABloc>(context);
 ```
+or
+```dart
+final aBloc = context.bloc<ABloc>();
+```
 
 ### Bloc
 Handles business logic and provides States to observers.
@@ -35,20 +39,20 @@ class ABloc extends Bloc<AState>{
 }
 ```
 
-* Provides **initialState**, which is the state that this Bloc starts with.
+* Provides **initialState**, which is the state that this Bloc starts with in the Bloc constructor.
 
 ```dart
-AState get initialState => AState(state: Loading)
+AState():super(initialState: AState.loading())
 ```
 
 * Define event handling functions, usually starts with “on…”,
-* Use **latestState** to access the latest State object up until then.
+* Use **state** to access the latest State object up until then.
 * Then use **update** to emits a new State. This State should usually be a clone from the previous State, with different State identifier/data.
 
 ```dart
 void onUserRefreshPage() async {
-  if(latestState.stateId == AState.DoneLoading){
-    updateState(latestState.copyWith(stateId: AState.Loading);
+  if(state.id == AState.DoneLoading){
+    update(state.copyWith(id: AState.Loading);
     // Fetch new data
   }
 }
@@ -62,13 +66,13 @@ Every state should:
 
 ```dart
 class AState {
-  static const String Loading = "AStateLoading";
-  static const String DoneLoading = "AStateDoneLoading";
+  static const String Loading = "Loading";
+  static const String DoneLoading = "DoneLoading";
   
-  String stateId;
+  String id;
   
-  AState copyWith({String stateId}) => AState(
-    stateId: stateId ?? this.stateId
+  AState copyWith({String id}) => AState(
+    id: id ?? this.id
   );
 }
 ```
@@ -80,7 +84,7 @@ A flutter widget provides a listener function that is guaranteed to be called on
  return BlocListener<ABloc, AState>(
   child: ...
   listener: (context, bloc, state){
-    if(state.stateId == AState.DoneLoading){
+    if(state.id == AState.DoneLoading){
       showSnackBar("New data loaded");
     }
   }
@@ -94,7 +98,7 @@ A flutter widget provides a builder function to render the widgets with the asso
  return BlocListener<ABloc, AState>(
   child: ...
   builder: (context, bloc, state){
-    if(state.stateId == AState.DoneLoading){
+    if(state.id == AState.DoneLoading){
       return _buildPage(state);
     } else {
       return _buildLoadingIndicator();
@@ -103,10 +107,31 @@ A flutter widget provides a builder function to render the widgets with the asso
  );
 ```
 
+### BlocConsumer
+A flutter widget that combines BlocWidgetBuilder and BlocListener
+
+```dart
+ return BlocConsumer<ABloc, AState>(
+  child: ...
+  builder: (context, bloc, state){
+    if(state.id == AState.DoneLoading){
+      return _buildPage(state);
+    } else {
+      return _buildLoadingIndicator();
+    }
+  },
+  listener: (context, bloc, state){
+    if(state.id == AState.DoneLoading){
+      showSnackBar("New data loaded");
+    }
+  }
+ );
+```
+
 ## Tips and Tricks
 
 ### Nullable
-Sometimes with new events, we want to clear some data in the State. So we might do something like `latestState.copyWith(data: null)`. However, **copyWith** doesn’t understand and thinks we didn’t pass any value to it.
+Sometimes with new events, we want to clear some data in the State. So we might do something like `state.copyWith(data: null)`. However, **copyWith** doesn’t understand and thinks we didn’t pass any value to it.
 
 ```dart
 class AState {

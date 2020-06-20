@@ -23,15 +23,15 @@ class _BlocWidgetBuilderState<T extends Bloc<M>, M>
 
   @override
   void initState() {
-    _bloc = widget.bloc ?? BlocProvider.of<T>(context);
+    _bloc = widget.bloc ?? context.bloc<T>();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<M>(
-      stream: _bloc.stateStream,
-      initialData: _bloc.latestState,
+      stream: _bloc,
+      initialData: _bloc.state,
       builder: (context, snapshot) {
         return widget.builder(context, _bloc, snapshot.data);
       },

@@ -4,20 +4,34 @@ import 'package:provider/provider.dart';
 
 typedef BlocBuilderFunction<T extends Bloc<dynamic>> = T Function(BuildContext);
 
-class BlocProvider<T extends Bloc<dynamic>> extends StatefulWidget with SingleChildCloneableWidget {
+class BlocProvider<T extends Bloc<dynamic>> extends ValueDelegateWidget
+    with SingleChildCloneableWidget {
   final Widget child;
   final BlocBuilderFunction<T> builder;
   final bool autoInit;
+  final UpdateShouldNotify<T> updateShouldNotify;
 
   BlocProvider({
     Key key,
     this.builder,
     this.child,
     this.autoInit = true,
-  }) : super(key: key);
-
-  @override
-  _BlocProviderState<T> createState() => _BlocProviderState<T>();
+    this.updateShouldNotify,
+  }) : super(
+          key: key,
+          delegate: BuilderStateDelegate<T>(
+            (context) {
+              final Bloc b = builder(context);
+              if (autoInit) {
+                b.init();
+              }
+              return b;
+            },
+            dispose: (context, bloc) {
+              bloc?.dispose();
+            },
+          ),
+        );
 
   static T of<T extends Bloc<dynamic>>(BuildContext context) {
     try {
@@ -41,24 +55,13 @@ class BlocProvider<T extends Bloc<dynamic>> extends StatefulWidget with SingleCh
       autoInit: autoInit,
     );
   }
-}
 
-class _BlocProviderState<T extends Bloc<dynamic>>
-    extends State<BlocProvider<T>> {
   @override
   Widget build(BuildContext context) {
-    return Provider<T>(
-      child: widget.child,
-      builder: (context) {
-        final Bloc b = widget.builder(context);
-        if (widget.autoInit) {
-          b.init();
-        }
-        return b;
-      },
-      dispose: (context, bloc) {
-        bloc?.dispose();
-      },
+    return InheritedProvider<T>(
+      updateShouldNotify: updateShouldNotify,
+      child: child,
+      value: delegate.value,
     );
   }
 }
@@ -68,15 +71,22 @@ class MultiBlocProvider extends StatelessWidget {
   final List<BlocProvider> Function(BuildContext context) builder;
   final Widget child;
 
-  const MultiBlocProvider({Key key, this.blocProviders, this.child, this.builder}) : super(key: key);
+  const MultiBlocProvider(
+      {Key key, this.blocProviders, this.child, this.builder})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     assert(blocProviders != null || builder != null);
     return MultiProvider(
-      providers:builder != null? builder(context): blocProviders,
+      providers: builder != null ? builder(context) : blocProviders,
       child: child,
     );
   }
 }
 
+extension BlocProviderExtension on BuildContext {
+  T bloc<T extends Bloc>() {
+    return BlocProvider.of<T>(this);
+  }
+}
