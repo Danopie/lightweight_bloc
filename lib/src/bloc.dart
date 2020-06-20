@@ -23,6 +23,7 @@ abstract class Bloc<T> extends Stream<T> {
   void update(T newState) {
     if (!_stateController.isClosed) {
       _blocObserver.invokeCallbacks(this, state, newState);
+      _state = newState;
       _stateController.add(newState);
     }
   }
