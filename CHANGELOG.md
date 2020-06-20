@@ -1,3 +1,7 @@
+## [0.0.5+1]
+
+* Update Provider version
+
 ## [0.0.5]
 
 * Remove RxDart dependencies
