@@ -1,3 +1,8 @@
+## [0.0.5+2]
+
+* Make initialState getter optional
+* Fix BlocConsumer
+
 ## [0.0.5+1]
 
 * Update Provider version
