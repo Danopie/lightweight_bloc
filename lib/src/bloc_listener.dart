@@ -35,7 +35,9 @@ class _BlocListenerState<T extends Bloc<M>, M>
         assert(
             state is M, "${state.runtimeType} is not of type ${M.runtimeType}");
 
-        widget.listener(context, _bloc, state);
+        if (widget.listener != null) {
+          widget.listener(context, _bloc, state);
+        }
       }
     });
 
