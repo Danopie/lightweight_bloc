@@ -3,18 +3,24 @@ import 'dart:async';
 import 'package:lightweight_bloc/src/bloc_observer.dart';
 
 abstract class Bloc<T> extends Stream<T> {
-
   static final _blocObserver = BlocObserver();
 
   final _stateController = StreamController<T>.broadcast();
 
   T _state;
 
+  List<T> _previousStates;
+
   Bloc({T initialState}) {
+    assert(initialState != null || this.initialState != null);
+
     _state = initialState ?? this.initialState;
+
+    _previousStates = List<T>();
+    _previousStates.add(_state);
   }
 
-  T get initialState;
+  T get initialState => null;
 
   T get state => _state;
 
@@ -22,9 +28,12 @@ abstract class Bloc<T> extends Stream<T> {
 
   void update(T newState) {
     if (!_stateController.isClosed) {
-      _blocObserver.invokeCallbacks(this, state, newState);
-      _state = newState;
-      _stateController.add(newState);
+      if (_state != newState) {
+        _blocObserver.invokeCallbacks(this, state, newState);
+        _state = newState;
+        _stateController.add(newState);
+        _previousStates.add(_state);
+      }
     }
   }
 
@@ -46,5 +55,10 @@ abstract class Bloc<T> extends Stream<T> {
 
   void dispose() {
     _stateController.close();
+  }
+
+  void undo() {
+    _previousStates.removeLast();
+    update(_previousStates.last);
   }
 }
