@@ -1,3 +1,7 @@
+## [0.0.5+3]
+
+* Fix a bug where bloc cannot emit new states
+
 ## [0.0.5+2]
 
 * Make initialState getter optional
