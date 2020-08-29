@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:lightweight_bloc/src/bloc_observer.dart';
 
 abstract class Bloc<T> extends Stream<T> {
+
   static final _blocObserver = BlocObserver();
 
   final _stateController = StreamController<T>.broadcast();
@@ -26,10 +27,11 @@ abstract class Bloc<T> extends Stream<T> {
 
   void init();
 
-  void update(T newState) {
+  Future<void> update(T newState) async {
     if (!_stateController.isClosed) {
       if (_state != newState) {
         _blocObserver.invokeCallbacks(this, state, newState);
+        await Future.delayed(Duration.zero);
         _state = newState;
         _stateController.add(newState);
         _previousStates.add(_state);
@@ -62,3 +64,4 @@ abstract class Bloc<T> extends Stream<T> {
     update(_previousStates.last);
   }
 }
+
