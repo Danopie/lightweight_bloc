@@ -1,6 +1,6 @@
 name: lightweight_bloc
 description: A lightweight implementation of the Bloc pattern
-version: 0.0.5+3
+version: 0.0.5+4
 homepage: https://github.com/Danopie/lightweight_bloc
 
 environment:
@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^4.1.2
-  rxdart: 0.18.1
+  rxdart: ^0.18.1
 
 dev_dependencies:
   test: any

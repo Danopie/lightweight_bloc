@@ -1,3 +1,7 @@
+## [0.0.5+4]
+
+* Use BehaviorSubject to restore previous behavior
+
 ## [0.0.5+3]
 
 * Fix a bug where bloc cannot emit new states
