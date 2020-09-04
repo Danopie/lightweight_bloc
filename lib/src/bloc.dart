@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:lightweight_bloc/src/bloc_observer.dart';
+import 'package:rxdart/rxdart.dart';
 
 abstract class Bloc<T> extends Stream<T> {
-
   static final _blocObserver = BlocObserver();
 
-  final _stateController = StreamController<T>.broadcast();
+  BehaviorSubject<T> _stateController;
 
   T _state;
 
@@ -16,6 +16,7 @@ abstract class Bloc<T> extends Stream<T> {
     assert(initialState != null || this.initialState != null);
 
     _state = initialState ?? this.initialState;
+    _stateController = BehaviorSubject<T>(seedValue: _state);
 
     _previousStates = List<T>();
     _previousStates.add(_state);
@@ -27,11 +28,10 @@ abstract class Bloc<T> extends Stream<T> {
 
   void init();
 
-  Future<void> update(T newState) async {
+  void update(T newState) {
     if (!_stateController.isClosed) {
       if (_state != newState) {
         _blocObserver.invokeCallbacks(this, state, newState);
-        await Future.delayed(Duration.zero);
         _state = newState;
         _stateController.add(newState);
         _previousStates.add(_state);
@@ -42,17 +42,12 @@ abstract class Bloc<T> extends Stream<T> {
   @override
   StreamSubscription<T> listen(void onData(T event),
       {Function onError, void onDone(), bool cancelOnError}) {
-    return _stateStream.listen(
+    return _stateController.stream.listen(
       onData,
       onError: onError,
       onDone: onDone,
       cancelOnError: cancelOnError,
     );
-  }
-
-  Stream<T> get _stateStream async* {
-    yield state;
-    yield* _stateController.stream;
   }
 
   void dispose() {
@@ -64,4 +59,3 @@ abstract class Bloc<T> extends Stream<T> {
     update(_previousStates.last);
   }
 }
-
