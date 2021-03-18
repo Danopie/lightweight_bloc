@@ -1,7 +1,7 @@
 import 'package:lightweight_bloc/src/bloc.dart';
 
 typedef OnUpdateCallBack = Function(
-    Bloc bloc, Object oldState, Object newState);
+    Bloc bloc, Object? oldState, Object? newState);
 
 class BlocObserver {
   static BlocObserver _instance = BlocObserver._();
@@ -10,7 +10,7 @@ class BlocObserver {
 
   final _updateCallbacks = Set<OnUpdateCallBack>();
 
-  void invokeCallbacks(Bloc bloc, Object oldState, Object newState) {
+  void invokeCallbacks(Bloc bloc, Object? oldState, Object? newState) {
     _updateCallbacks.forEach((c) {
       c(bloc, oldState, newState);
     });

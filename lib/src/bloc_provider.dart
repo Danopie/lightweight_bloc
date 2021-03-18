@@ -6,12 +6,12 @@ import 'package:provider/single_child_widget.dart';
 typedef BlocBuilderFunction<T extends Bloc<dynamic>> = T Function(BuildContext);
 
 class BlocProvider<T extends Bloc<dynamic>> extends SingleChildStatefulWidget {
-  final Widget child;
-  final BlocBuilderFunction<T> builder;
+  final Widget? child;
+  final BlocBuilderFunction<T>? builder;
   final bool autoInit;
 
   BlocProvider({
-    Key key,
+    Key? key,
     this.builder,
     this.child,
     this.autoInit = true,
@@ -37,15 +37,15 @@ class BlocProvider<T extends Bloc<dynamic>> extends SingleChildStatefulWidget {
 class _BlocProviderState<T extends Bloc<dynamic>>
     extends SingleChildState<BlocProvider<T>> {
   @override
-  Widget buildWithChild(BuildContext context, Widget child) {
+  Widget buildWithChild(BuildContext context, Widget? child) {
     return InheritedProvider<T>(
       child: child,
       create: (context) {
-        final Bloc b = widget.builder(context);
+        final Bloc b = widget.builder!(context);
         if (widget.autoInit) {
           b.init();
         }
-        return b;
+        return b as T;
       },
       dispose: (context, bloc) {
         bloc?.dispose();
@@ -55,19 +55,19 @@ class _BlocProviderState<T extends Bloc<dynamic>>
 }
 
 class MultiBlocProvider extends StatelessWidget {
-  final List<BlocProvider> blocProviders;
-  final List<BlocProvider> Function(BuildContext context) builder;
-  final Widget child;
+  final List<BlocProvider>? blocProviders;
+  final List<BlocProvider> Function(BuildContext context)? builder;
+  final Widget? child;
 
   const MultiBlocProvider(
-      {Key key, this.blocProviders, this.child, this.builder})
+      {Key? key, this.blocProviders, this.child, this.builder})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     assert(blocProviders != null || builder != null);
     return MultiProvider(
-      providers: builder != null ? builder(context) : blocProviders,
+      providers: builder != null ? builder!(context) : blocProviders!,
       child: child,
     );
   }

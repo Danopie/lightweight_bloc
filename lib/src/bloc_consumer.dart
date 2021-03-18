@@ -4,12 +4,12 @@ import 'package:lightweight_bloc/src/bloc_builder.dart';
 import 'package:lightweight_bloc/src/bloc_listener.dart';
 
 class BlocConsumer<T extends Bloc<M>, M> extends StatefulWidget {
-  final T bloc;
+  final T? bloc;
   final BlocWidgetBuilderFunction<T, M> builder;
-  final BlocListenerFunction<T, M> listener;
+  final BlocListenerFunction<T, M>? listener;
 
   const BlocConsumer(
-      {Key key, @required this.builder, this.bloc, this.listener})
+      {Key? key, required this.builder, this.bloc, this.listener})
       : super(key: key);
 
   @override

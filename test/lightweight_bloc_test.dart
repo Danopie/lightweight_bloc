@@ -61,7 +61,7 @@ class CountBloc extends Bloc<int> {
 
 class FlagBloc extends Bloc<bool> {
   final CountBloc countBloc;
-  StreamSubscription _sub;
+  StreamSubscription? _sub;
   FlagBloc(this.countBloc) : super(initialState: false) {
     _sub = countBloc.listen((event) async {
       if (event == 2) {
