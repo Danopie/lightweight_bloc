@@ -48,7 +48,7 @@ class _BlocProviderState<T extends Bloc<dynamic>>
         return b as T;
       },
       dispose: (context, bloc) {
-        bloc?.dispose();
+        bloc.dispose();
       },
     );
   }
