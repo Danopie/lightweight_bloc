@@ -7,14 +7,14 @@ abstract class Bloc<T> extends Stream<T> {
 
   final StreamController<T?> _stateController = StreamController<T>.broadcast();
 
-  T? _state;
+  late T _state;
 
-  late List<T?> _previousStates;
+  late List<T> _previousStates;
 
   Bloc({T? initialState}) {
     assert(initialState != null || this.initialState != null);
 
-    _state = initialState ?? this.initialState;
+    _state = (initialState ?? this.initialState)!;
 
     _previousStates = <T>[];
     _previousStates.add(_state);
@@ -22,11 +22,11 @@ abstract class Bloc<T> extends Stream<T> {
 
   T? get initialState => null;
 
-  T? get state => _state;
+  T get state => _state;
 
   void init();
 
-  Future<void> update(T? newState) async {
+  Future<void> update(T newState) async {
     if (!_stateController.isClosed) {
       if (_state != newState) {
         _blocObserver.invokeCallbacks(this, state, newState);
